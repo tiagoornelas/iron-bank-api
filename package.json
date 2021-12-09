@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "mocha ./test/**/*$NAME*.test.js --exit"
+    "test": "mocha ./test/*.test.js --exit"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "http-status-code": "^2.1.0",
+    "http-status-codes": "^2.1.4",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3"
   },
