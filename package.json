@@ -1,0 +1,31 @@
+{
+  "name": "iron-bank-api",
+  "version": "1.0.0",
+  "description": "API de banco digital com operações básicas bancárias",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiagoornelas/iron-bank-api.git"
+  },
+  "author": "Tiago Ornelas <advtiagoornelas@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tiagoornelas/iron-bank-api/issues"
+  },
+  "homepage": "https://github.com/tiagoornelas/iron-bank-api#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "http-status-code": "^2.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.4.1"
+  }
+}
