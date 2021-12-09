@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const db = require('mysql2/promise');
 
 const mysql = db.createPool({
