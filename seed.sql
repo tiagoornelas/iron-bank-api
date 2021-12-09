@@ -1,4 +1,4 @@
-const seedQuery = `DROP SCHEMA IF EXISTS iron_bank_api;
+DROP SCHEMA IF EXISTS iron_bank_api;
 
 CREATE SCHEMA iron_bank_api;
 
@@ -113,6 +113,4 @@ BEGIN
 END
 $$
 
-DELIMITER ;`;
-
-module.exports = seedQuery;
+DELIMITER ;

@@ -15,10 +15,11 @@ const auth = async (req, res, next) => {
     });
   }
   try {
-    const { id, username } = jwt.verify(token, API_SECRET, JWT_COFING);
+    const { id, cpf, admin } = jwt.verify(token, API_SECRET, JWT_COFING);
     req.user = {
       id,
-      username,
+      cpf,
+      admin
     };
     return next();
   } catch (err) {
