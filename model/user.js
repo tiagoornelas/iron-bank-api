@@ -20,7 +20,7 @@ const getUser = async (cpf) => {
 
 const addUser = async (name, username, pw) => {
   const result = await mysql.query(
-    `INSERT INTO usuario (name, password, cpf)
+    `INSERT INTO user (name, password, cpf)
     VALUES (?, ?, ?)`,
     [name, username, pw],
   );

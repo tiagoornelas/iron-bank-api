@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 const express = require('express');
 
 const error = require('./middleware/error');
-const { auth } = require('./middleware/auth');
+// const { auth } = require('./middleware/auth');
 const userRouter = require('./controller/user');
 const loginRouter = require('./controller/login');
 
@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 
 app.use('/login', loginRouter);
-app.use('/user', auth, userRouter);
+app.use('/user', userRouter);
 
 app.use(error);
 
