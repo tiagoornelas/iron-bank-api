@@ -43,5 +43,24 @@ describe('USER', () => {
       .send({});
       expect(response).to.have.status(StatusCodes.UNAUTHORIZED);
     });
+
+    it('Check if an admin can get any user information', async () => {
+      const login = await chai.request(server)
+        .post('/login')
+        .set('Content-Type', 'application/json')
+        .send({
+          cpf: '09859973628',
+          password: 'braavos'
+        });
+
+      const response = await chai.request(server)
+      .get('/user/11111111111')
+      .set('token', login.body.token)
+      .send({});
+      expect(response).to.have.status(StatusCodes.OK);
+      expect(response.body).to.have.length(1);
+      expect(response.body[0]).to.have.property('cpf');
+      expect(response.body[0].name).to.equal('Usuário Teste');
+    });
   })
 });
