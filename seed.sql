@@ -66,8 +66,8 @@ INSERT INTO
 VALUES
 	('Tiago Ornelas', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '09859973628', 1),
   ('Admin Braavos', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '12345678901', 1),
-  ('Usuário Teste', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '11111111111', 1),
-  ('Pai do Usuário Teste', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '22222222222', 1);
+  ('Usuário Teste', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '11111111111', 0),
+  ('Pai do Usuário Teste', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '22222222222', 0);
 
 INSERT INTO
 	transaction (from_user, to_user, value)
