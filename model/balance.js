@@ -4,17 +4,26 @@ const getBalance = async (cpf) => {
   if (!cpf) {
     const [result] = await mysql.query(
       `SELECT user.cpf,
-              IFNULL(SUM(deposit.value), 0)
-              - IFNULL(SUM(payment.value), 0)
-              - IFNULL(SUM(transaction_from.value), 0)
-              + IFNULL(SUM(transaction_to.value), 0) AS balance
-        FROM USER
-        LEFT JOIN deposit ON user.id_user = deposit.to_user
-        INNER JOIN exchange_fee ON deposit.id_exchange_fee = exchange_fee.id_exchange_fee
-        LEFT JOIN payment ON user.id_user = payment.from_user
-        LEFT JOIN TRANSACTION AS transaction_from ON user.id_user = transaction_from.from_user
-        LEFT JOIN TRANSACTION AS transaction_to ON user.id_user = transaction_to.to_user
-        GROUP BY user.id_user
+              SUM(balance) AS balance
+        FROM
+        (SELECT deposit.to_user,
+                IFNULL(SUM(deposit.value), 0) AS balance
+          FROM deposit
+          GROUP BY deposit.to_user
+          UNION SELECT payment.from_user,
+                      IFNULL(SUM(payment.value), 0) * -1 AS balance
+          FROM payment
+          GROUP BY payment.from_user
+          UNION SELECT transaction.from_user,
+                      IFNULL(SUM(transaction.value), 0) * -1 AS balance
+          FROM TRANSACTION
+          GROUP BY transaction.from_user
+          UNION SELECT transaction.to_user,
+                      IFNULL(SUM(transaction.value), 0) AS balance
+          FROM TRANSACTION
+          GROUP BY transaction.to_user) AS operations
+        INNER JOIN USER ON operations.to_user = user.id_user
+        GROUP BY operations.to_user
         ORDER BY balance DESC,
                 id_user`,
     );
@@ -22,18 +31,29 @@ const getBalance = async (cpf) => {
   }
   const [result] = await mysql.query(
     `SELECT user.cpf,
-            IFNULL(SUM(deposit.value), 0)
-            - IFNULL(SUM(payment.value), 0)
-            - IFNULL(SUM(transaction_from.value), 0)
-            + IFNULL(SUM(transaction_to.value), 0) AS balance
-        FROM USER
-        LEFT JOIN deposit ON user.id_user = deposit.to_user
-        INNER JOIN exchange_fee ON deposit.id_exchange_fee = exchange_fee.id_exchange_fee
-        LEFT JOIN payment ON user.id_user = payment.from_user
-        LEFT JOIN TRANSACTION AS transaction_from ON user.id_user = transaction_from.from_user
-        LEFT JOIN TRANSACTION AS transaction_to ON user.id_user = transaction_to.to_user
+            SUM(balance) AS balance
+        FROM
+        (SELECT deposit.to_user,
+              IFNULL(SUM(deposit.value), 0) AS balance
+        FROM deposit
+        GROUP BY deposit.to_user
+        UNION SELECT payment.from_user,
+                    IFNULL(SUM(payment.value), 0) * -1 AS balance
+        FROM payment
+        GROUP BY payment.from_user
+        UNION SELECT transaction.from_user,
+                    IFNULL(SUM(transaction.value), 0) * -1 AS balance
+        FROM TRANSACTION
+        GROUP BY transaction.from_user
+        UNION SELECT transaction.to_user,
+                    IFNULL(SUM(transaction.value), 0) AS balance
+        FROM TRANSACTION
+        GROUP BY transaction.to_user) AS operations
+        INNER JOIN USER ON operations.to_user = user.id_user
         WHERE user.cpf = ?
-        GROUP BY user.id_user`,
+        GROUP BY operations.to_user
+        ORDER BY balance DESC,
+              id_user`,
     [cpf],
   );
   return result;

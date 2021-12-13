@@ -9,8 +9,8 @@ const { expect } = chai;
 
 chai.use(chaiHttp);
 
-describe('USER', () => {
-  describe('Check GET methods', () => {
+describe('2 - USER', () => {
+  describe('2.1 - Check GET methods', () => {
     it('Check if an admin can get an array of all users', async () => {
       const login = await chai.request(server)
         .post('/login')
@@ -100,7 +100,7 @@ describe('USER', () => {
     });
   });
 
-  describe('Check POST methods', () => {
+  describe('2.2 - Check POST methods', () => {
     it('Check if it cannot create a user without CPF', async () => {
       const response = await chai.request(server)
         .post('/user')

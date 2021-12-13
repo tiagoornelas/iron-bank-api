@@ -30,4 +30,13 @@ const getTransactions = async (cpf) => {
   return result;
 };
 
-module.exports = { getTransactions };
+const transferAmount = async (from, to, value) => {
+  const [result] = await mysql.query(
+    `INSERT INTO transaction (from_user, to_user, value)
+    VALUES (?, ?, ?)`,
+    [from, to, value],
+  );
+  return result;
+}
+
+module.exports = { getTransactions, transferAmount };

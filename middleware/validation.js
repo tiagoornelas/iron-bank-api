@@ -1,5 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const { getUser } = require('../model/user');
+const { getBalance } = require('../model/balance');
 
 const adminCheck = async (req, res, next) => {
   try {
@@ -87,4 +88,38 @@ const userCheck = async (req, res, next) => {
   }
 };
 
-module.exports = { adminCheck, selfCheck, userCheck };
+const transferCheck = async (req, res, next) => {
+  try {
+    const { cpf: cpf_token } = req.user;
+    const { receiver: cpf_body, value } = req.body;
+    const data = await getUser(cpf_body);
+    if (!cpf_body) {
+      return res.status(StatusCodes.BAD_REQUEST).send({
+        message: 'You need to inform receiver and value.',
+      });
+    } if (value !== 0 && !value) {
+      return res.status(StatusCodes.BAD_REQUEST).send({
+        message: 'You need to inform receiver and value.',
+      });
+    } if (data.length < 1) {
+      return res.status(StatusCodes.BAD_REQUEST).send({
+        message: 'The informed account does not exist.',
+      });
+    } if (value <= 0 || typeof value === 'string') {
+      return res.status(StatusCodes.BAD_REQUEST).send({
+        message: 'The value must be a number higher than zero.',
+      });
+    } 
+    const [balance] = await getBalance(cpf_token);
+    if (balance.balance < value) {
+      return res.status(StatusCodes.NOT_ACCEPTABLE).send({
+        message: 'Insufficient funds.',
+      });
+    }
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
+module.exports = { adminCheck, selfCheck, userCheck, transferCheck };

@@ -15,8 +15,8 @@ const { expect } = chai;
 
 chai.use(chaiHttp);
 
-describe('LOGIN', () => {
-  describe('Check POST methods', () => {
+describe('1 - LOGIN', () => {
+  describe('1.1 - Check POST methods', () => {
     it('Check if it cannot log in without CPF', async () => {
       const response = await chai.request(server)
         .post('/login')

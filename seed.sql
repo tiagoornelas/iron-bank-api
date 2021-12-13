@@ -67,14 +67,16 @@ VALUES
 	('Tiago Ornelas', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '09859973628', 1),
   ('Admin Braavos', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '12345678901', 1),
   ('Usuário Teste', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '11111111111', 0),
-  ('Pai do Usuário Teste', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '22222222222', 0);
+  ('Pai do Usuário Teste', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '22222222222', 0),
+  ('Vítima do Fraudulento', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '55555555555', 0),
+  ('Usuário Fraudulento', '$2b$10$cLuoa5AR7FfHdALCDiGoyeHtMlw4nW/q.h/egakWrwFxrZBzURbRC', '17117117117', 0);
 
 INSERT INTO
 	transaction (from_user, to_user, value)
 VALUES
     (2, 1, 10000),
     (1, 3, 500),
-    (4, 3, 1000);
+    (5, 6, 1000);
 
 INSERT INTO
 	exchange_fee (usd_value, exchange_price, exchange_fee_brl)
@@ -89,6 +91,12 @@ VALUES
     (2, 22500, 1),
     (1, 225, 2),
     (4, 450, 3);
+
+INSERT INTO
+	deposit (to_user, value)
+VALUES
+    (4, 700),
+    (5, 1000);
 
 INSERT INTO
 	payment (from_user, value)
