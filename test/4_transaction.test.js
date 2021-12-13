@@ -4,6 +4,7 @@ const { StatusCodes } = require('http-status-codes');
 
 const server = require('../index');
 const { getBalance } = require('../model/balance');
+const { getUser } = require('../model/user');
 
 const { expect } = chai;
 
@@ -309,32 +310,87 @@ describe('4 - TRANSACTION', () => {
     });
   });
 
-  // describe('4.3 - Check FRAUD PREVENTION (POST and GET) methods', () => {
-  //   it('Check if the user can transfer money from its account to an existent account', async () => {
-  //     const login = await chai.request(server)
-  //       .post('/login')
-  //       .set('Content-Type', 'application/json')
-  //       .send({
-  //         cpf: '09859973628',
-  //         password: 'braavos'
-  //       });
+  describe('4.3 - Check FRAUD PREVENTION (POST and GET) methods', () => {
+    it('Check if an admin can flag a transaction as fraud', async () => {
+      const login = await chai.request(server)
+        .post('/login')
+        .set('Content-Type', 'application/json')
+        .send({
+          cpf: '09859973628',
+          password: 'braavos'
+        });
 
-  //     const response = await chai.request(server)
-  //     .post('/transaction')
-  //     .set('token', login.body.token)
-  //     .send({
-  //       receiver: '12345678901',
-  //       value: 500
-  //     });
-  //     expect(response).to.have.status(StatusCodes.CREATED);
-  //     expect(response.body[0].affectedRows).to.equal(1);
+      const response = await chai.request(server)
+      .put('/transaction/fraud/3')
+      .set('token', login.body.token)
+      .send({});
+      expect(response).to.have.status(StatusCodes.OK);
+      expect(response.body.message).to.equal(
+        'You\'ve flagged transaction number 3 as fraudulent, the receiver is now blocked.',
+      );
 
-  //     const dataReceiver = await getBalance("12345678901");
-  //     expect(dataReceiver.balance).to.be.equal('12630.00');
+      const [data] = await getUser("17117117117");
+      expect(data.blocked).to.be.equal(1);
+    });
 
-  //     const [dataSender] = await getBalance("09859973628");
-  //     expect(dataSender.balance).to.be.equal('8775.00');
-  //   });
+    it('Check if a regular user cannot flag frauds', async () => {
+      const login = await chai.request(server)
+        .post('/login')
+        .set('Content-Type', 'application/json')
+        .send({
+          cpf: '22222222222',
+          password: 'braavos'
+        });
 
-  // });
+      const response = await chai.request(server)
+      .put('/transaction/fraud/3')
+      .set('token', login.body.token)
+      .send({});
+      expect(response).to.have.status(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('Check if a blocked user cannot transfer money', async () => {
+      const login = await chai.request(server)
+        .post('/login')
+        .set('Content-Type', 'application/json')
+        .send({
+          cpf: '17117117117',
+          password: 'braavos'
+        });
+
+      const response = await chai.request(server)
+      .post('/transaction')
+      .set('token', login.body.token)
+      .send({
+        receiver: '12345678901',
+        value: 500
+      });
+      expect(response).to.have.status(StatusCodes.UNAUTHORIZED);
+      expect(response.body.message).to.equal(
+        'You were blocked by the Iron Bank administration.',
+      );
+    });
+
+    it('Check if a blocked user cannot receive money', async () => {
+      const login = await chai.request(server)
+        .post('/login')
+        .set('Content-Type', 'application/json')
+        .send({
+          cpf: '09859973628',
+          password: 'braavos'
+        });
+
+      const response = await chai.request(server)
+      .post('/transaction')
+      .set('token', login.body.token)
+      .send({
+        receiver: '17117117117',
+        value: 500
+      });
+      expect(response).to.have.status(StatusCodes.UNAUTHORIZED);
+      expect(response.body.message).to.equal(
+        'The receiver is blocked, thus cannot receive any money.',
+      );
+    });
+  });
 });

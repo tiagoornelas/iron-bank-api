@@ -120,6 +120,29 @@ const transferCheck = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
+};
+
+const blockedCheck = async (req, res, next) => {
+  try {
+    const { cpf: cpf_token } = req.user;
+    const { receiver: cpf_body } = req.body;
+    const [tokenUser] = await getUser(cpf_token);
+    const [bodyuser] = await getUser(cpf_body);
+    if (cpf_body && bodyuser.blocked === 1) {
+      return res.status(StatusCodes.UNAUTHORIZED).send({
+        message:'The receiver is blocked, thus cannot receive any money.',
+      })
+    } if (tokenUser.blocked === 1) {
+      return res.status(StatusCodes.UNAUTHORIZED).send({
+        message: 'You were blocked by the Iron Bank administration.',
+      });
+    }
+    return next();
+  } catch (err) {
+    next(err);
+  }
 }
 
-module.exports = { adminCheck, selfCheck, userCheck, transferCheck };
+module.exports = {
+  adminCheck, selfCheck, userCheck, transferCheck, blockedCheck,
+};

@@ -30,6 +30,17 @@ const getTransactions = async (cpf) => {
   return result;
 };
 
+const getTransactionInfo = async (transactionId) => {
+  const [result] = await mysql.query(
+    `SELECT *
+    FROM TRANSACTION
+    WHERE transaction.id_transaction = ?
+    `,
+    [transactionId],
+  );
+  return result;
+}
+
 const transferAmount = async (from, to, value) => {
   const [result] = await mysql.query(
     `INSERT INTO transaction (from_user, to_user, value)
@@ -39,4 +50,27 @@ const transferAmount = async (from, to, value) => {
   return result;
 }
 
-module.exports = { getTransactions, transferAmount };
+const flagTransaction = async (transactionId) => {
+  const [result] = await mysql.query(
+    `UPDATE TRANSACTION
+    SET fraud_flag = 1,
+        flagged_at = now()
+    WHERE transaction.id_transaction = ?`,
+    [transactionId],
+  );
+  return result;
+}
+
+const blockUser = async (userId) => {
+  const [result] = await mysql.query(
+    `UPDATE user
+    SET blocked = 1, blocked_at = now()
+    WHERE user.id_user = ?`,
+    [userId],
+  );
+  return result;
+}
+
+module.exports = {
+  getTransactions, getTransactionInfo, transferAmount, flagTransaction, blockUser,
+};

@@ -1,5 +1,7 @@
 const { getUser } = require('../model/user')
-const { transferAmount } = require('../model/transaction');
+const {
+  transferAmount, getTransactionInfo, flagTransaction, blockUser,
+} = require('../model/transaction');
 
 const prepareTransaction = async (cpf_token, cpf_body, value) => {
   const [dataSender] =  await getUser(cpf_token);
@@ -10,4 +12,14 @@ const prepareTransaction = async (cpf_token, cpf_body, value) => {
   return data;
 };
 
-module.exports = { prepareTransaction };
+const flagFraud = async (transactionId) => {
+  const [transaction] = await getTransactionInfo(transactionId);
+  const flag = await flagTransaction(transactionId);
+  const block = await blockUser(transaction.to_user);
+  return {
+    flag,
+    block
+  };
+};
+
+module.exports = { prepareTransaction, flagFraud };
