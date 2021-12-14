@@ -1,7 +1,7 @@
 # Seja bem-vindo ao Iron Bank!
 ![braavos](https://i.ibb.co/pW1V0Gg/32fe0a36240b2cb063fa3d5508c0f514.jpg)
 
-Esse foi o resultado de **15 horas** de projeto para desenvolvimento de uma API REST com funções relacionadas ao gerenciamento de contas bancárias. O trabalho foi desenvolvido nos dias 09/12/2021 das 15hrs as 20rs e 13/12/2021 das 14hrs até meia noite com auxílio de bastante café. O projeto foi realizado via **TDD** e utilizando a branch *'tdd-creation'* que, após testada foi mergeada.
+Esse foi o resultado de **15 horas** de projeto para desenvolvimento de uma API REST com funções relacionadas ao gerenciamento de contas bancárias. O trabalho foi desenvolvido nos dias 09/12/2021 das 15hrs as 20rs e 13/12/2021 das 14hrs até meia noite com auxílio de bastante café. O projeto foi realizado via **TDD** e utilizando a branch *'tdd-creation'* que, após testada, foi mergeada.
 
 [LinkedIn](https://www.linkedin.com/in/tiagoornelasadv/)<br />
 advtiagoornelas@gmail.com
