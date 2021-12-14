@@ -7,6 +7,7 @@ const userRouter = require('./controller/user');
 const loginRouter = require('./controller/login');
 const balanceRouter = require('./controller/balance');
 const depositRouter = require('./controller/deposit');
+const paymentRouter = require('./controller/payment');
 const transactionRouter = require('./controller/transaction');
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use('/user', userRouter);
 app.use('/login', loginRouter);
 app.use('/balance', balanceRouter);
 app.use('/deposit', depositRouter);
+app.use('/payment', paymentRouter);
 app.use('/transaction', transactionRouter);
 
 app.use(error);

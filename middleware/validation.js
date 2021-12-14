@@ -135,12 +135,14 @@ const blockedCheck = async (req, res, next) => {
         });
       }
     }
-    const { receiver: cpf_body } = req.body;
-    const [bodyuser] = await getUser(cpf_body);
-    if (cpf_body && bodyuser.blocked === 1) {
-      return res.status(StatusCodes.UNAUTHORIZED).send({
-        message:'The receiver is blocked, thus cannot receive any money.',
-      })
+    if (req.body.receiver) {
+      const { receiver: cpf_body } = req.body;
+      const [bodyuser] = await getUser(cpf_body);
+      if (cpf_body && bodyuser.blocked === 1) {
+        return res.status(StatusCodes.UNAUTHORIZED).send({
+          message:'The receiver is blocked, thus cannot receive any money.',
+        })
+      }
     }
     return next();
   } catch (err) {
@@ -193,7 +195,43 @@ const depositCheck = async (req, res, next) => {
   }
 };
 
+const paymentCheck = async (req, res, next) => {
+  const checkBillDetails = (barcode) => {
+    let dueDate = new Date('1997-07-10');
+    const value = +barcode.slice(-10) / 100;
+    const daysFromDate = +barcode.slice(-14, -10);
+    dueDate.setDate(dueDate.getDate() + daysFromDate);
+    return {
+      value,
+      dueDate
+    }
+  };
+
+  const { cpf: cpf_token } = req.user;
+  const { barcode } = req.body;
+  if (!barcode || barcode.length !== 47) {
+    return res.status(StatusCodes.BAD_REQUEST).send({
+      message: 'You need to inform a valid barcode.',
+    });
+  }
+  if (checkBillDetails(barcode).dueDate < new Date()) {
+    return res.status(StatusCodes.NOT_ACCEPTABLE).send({
+      message: 'You cannot pay an overdue bill.',
+    })
+  }
+  const [balance] = await getBalance(cpf_token);
+    if (balance.balance < checkBillDetails(barcode).value) {
+      return res.status(StatusCodes.NOT_ACCEPTABLE).send({
+        message: 'Insufficient funds.',
+      });
+    }
+    req.bill = {
+      value: checkBillDetails(barcode).value,
+    };
+    return next();
+}
+
 
 module.exports = {
-  adminCheck, selfCheck, userCheck, transferCheck, blockedCheck, depositCheck,
+  adminCheck, selfCheck, userCheck, transferCheck, blockedCheck, depositCheck, paymentCheck,
 };

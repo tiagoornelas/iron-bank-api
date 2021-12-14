@@ -101,7 +101,7 @@ describe('2 - USER', () => {
   });
 
   describe('2.2 - Check POST methods', () => {
-    it('Check if it cannot create a user without CPF', async () => {
+    it('Check if it cannot create an user without CPF', async () => {
       const response = await chai.request(server)
         .post('/user')
         .set('Content-Type', 'application/json')
@@ -115,7 +115,7 @@ describe('2 - USER', () => {
       );
     });
 
-    it('Check if it cannot create a user without password', async () => {
+    it('Check if it cannot create an user without password', async () => {
       const response = await chai.request(server)
         .post('/user')
         .set('Content-Type', 'application/json')
@@ -129,7 +129,7 @@ describe('2 - USER', () => {
       );
     });
 
-    it('Check if it cannot create a user without name', async () => {
+    it('Check if it cannot create an user without name', async () => {
       const response = await chai.request(server)
         .post('/user')
         .set('Content-Type', 'application/json')
@@ -143,7 +143,7 @@ describe('2 - USER', () => {
       );
     });
 
-    it('Check if it cannot create a user without surname', async () => {
+    it('Check if it cannot create an user without surname', async () => {
       const response = await chai.request(server)
         .post('/user')
         .set('Content-Type', 'application/json')
@@ -156,7 +156,7 @@ describe('2 - USER', () => {
       expect(response.body.message).to.equal('Please inform your full name.');
     });
 
-    it('Check if it cannot create a user with a preexistent CPF', async () => {
+    it('Check if it cannot create an user with a preexistent CPF', async () => {
       const response = await chai.request(server)
         .post('/user')
         .set('Content-Type', 'application/json')
@@ -169,7 +169,7 @@ describe('2 - USER', () => {
       expect(response.body.message).to.equal('This CPF is already registered.');
     });
 
-    it('Check if anyone, even without token, can create a user with name, CPF and hased password', async () => {
+    it('Check if anyone, even without token, can create an user with name, CPF and hased password', async () => {
       const response = await chai.request(server)
         .post('/user')
         .set('Content-Type', 'application/json')
