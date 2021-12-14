@@ -8,7 +8,7 @@ const { expect } = chai;
 
 chai.use(chaiHttp);
 
-describe('7 - USER', () => {
+describe('7 - PROFIT', () => {
   describe('7.1 - Check GET methods', () => {
     it('Check if an admin can get the bank profit value', async () => {
       const login = await chai.request(server)
