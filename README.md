@@ -83,7 +83,7 @@ O projeto foi realizado via TDD com testes de integração (API), não houve tem
 Os testes foram feitos para rodarem em ambiente de homologação e, portanto, em um banco de dados de teste.
 
 1. Certifiquje-se de que o servidor **não** está iniciado pelo `npm start`, os testes rodarão de maneira autônoma;
-2. Inicie os testes com `npm tests` e aguarde os 68 testes rodarem, esse processo deve levar cerca de 4 segundos;
+2. Inicie os testes com `npm test` e aguarde os 68 testes rodarem, esse processo deve levar cerca de 4 segundos;
 3. Após a realização dos testes, caso queira, utilize o arquivo `seed.js` para resetar o banco (a automação deste processo de reset do banco de testes pode também ser objeto de melhoria futura em caso de mais tempo para realização do projeto).
 
 ---
