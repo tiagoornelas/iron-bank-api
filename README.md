@@ -156,7 +156,7 @@ Os testes foram feitos para rodarem em ambiente de homologação e, portanto, em
 
 ![api-screenshot](https://i.ibb.co/xjWPMGS/Captura-de-tela-2021-12-14-011809.png)
 
-- `POST /deposit` não requer token, partindo da premissa de que qualquer pessoa pode depositar em uma conta, porém requer o body também requer o body: `{ receiver: 'cpf de usuário do banco', currency: 'BRL ou USD', value: 'número inteiro ou de até duas casas decimais' }, e fará o depósito do valor indicado na conta destino. Em caso de depósito em dólar, o Iron Bank irá fazer a conversão em tempo real da cotação do dólar, irá depositar o valor em real, descontando a taxa de câmbio de 10%, que será destinado ao lucro do banco;
+- `POST /deposit` não requer token, partindo da premissa de que qualquer pessoa pode depositar em uma conta, porém requer o body: `{ receiver: 'cpf de usuário do banco', currency: 'BRL ou USD', value: 'número inteiro ou de até duas casas decimais' }, e fará o depósito do valor indicado na conta destino. Em caso de depósito em dólar, o Iron Bank irá fazer a conversão em tempo real da cotação do dólar, irá depositar o valor em real, descontando a taxa de câmbio de 10%, que será destinado ao lucro do banco;
     - A API não aceitará requisições faltando parâmetros do body ou em formato indesejado;
     - A API não aceitará depósitos superiores a BRL 2.000,00 (tanto em real quanto em dólar, já convertendo nessa verificação);
     - A API não aceitará depósito para usuário não existente ou bloqueado (baseado no CPF);
