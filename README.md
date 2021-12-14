@@ -32,7 +32,7 @@ Requisitos obrigatórios:
 - Por questão de segurança cada transação de depósito não pode ser maior do que R$2.000;
 - As transferências entre contas são gratuitas e ilimitadas;
 
-Requisitos extras desenvolvidas no projeto:
+Requisitos extras desenvolvidos no projeto:
 - Uso de login para autenticação de usuários;
 - As senhas no banco de dados estão cifradas;
 - Definição de usuários administradores e comuns, permitindo ações *super user*;
@@ -79,12 +79,12 @@ No Iron Bank foi utilizado:
 
 ![tests-screenshot](https://i.ibb.co/smq6Xm7/tests-iron-Bank.jpg)
 
-O projeto foi realizado via TDD com testes de integração (API), não houve tempo hábil para a criação de testes unitários mas essa melhoria pode ser implementada mais a frente.
+O projeto foi realizado via TDD com testes de integração (API), não houve tempo hábil para a criação de testes unitários mas [essa melhoria](https://github.com/tiagoornelas/iron-bank-api/issues/2) pode ser implementada mais a frente.
 Os testes foram feitos para rodarem em ambiente de homologação e, portanto, em um banco de dados de teste.
 
 1. Certifiquje-se de que o servidor **não** está iniciado pelo `npm start`, os testes rodarão de maneira autônoma;
 2. Inicie os testes com `npm test` e aguarde os 68 testes rodarem, esse processo deve levar cerca de 4 segundos;
-3. Após a realização dos testes, caso queira, utilize o arquivo `seed.js` para resetar o banco (a automação deste processo de reset do banco de testes pode também ser objeto de melhoria futura em caso de mais tempo para realização do projeto).
+3. Após a realização dos testes, caso queira, utilize o arquivo `seed.js` para resetar o banco (a automação deste processo de reset do banco de testes pode também ser objeto de [melhoria futura](https://github.com/tiagoornelas/iron-bank-api/issues/3) em caso de mais tempo para realização do projeto).
 
 ---
 # Endpoints
