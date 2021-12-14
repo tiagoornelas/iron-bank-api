@@ -1,4 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
+const fetch = require('cross-fetch');
+
 const { getUser } = require('../model/user');
 const { getBalance } = require('../model/balance');
 
@@ -124,25 +126,74 @@ const transferCheck = async (req, res, next) => {
 
 const blockedCheck = async (req, res, next) => {
   try {
-    const { cpf: cpf_token } = req.user;
+    if (req.user) {
+      const { cpf: cpf_token } = req.user;
+      const [tokenUser] = await getUser(cpf_token);
+      if (tokenUser.blocked === 1) {
+        return res.status(StatusCodes.UNAUTHORIZED).send({
+          message: 'You were blocked by the Iron Bank administration.',
+        });
+      }
+    }
     const { receiver: cpf_body } = req.body;
-    const [tokenUser] = await getUser(cpf_token);
     const [bodyuser] = await getUser(cpf_body);
     if (cpf_body && bodyuser.blocked === 1) {
       return res.status(StatusCodes.UNAUTHORIZED).send({
         message:'The receiver is blocked, thus cannot receive any money.',
       })
-    } if (tokenUser.blocked === 1) {
-      return res.status(StatusCodes.UNAUTHORIZED).send({
-        message: 'You were blocked by the Iron Bank administration.',
-      });
     }
     return next();
   } catch (err) {
     next(err);
   }
-}
+};
+
+const depositCheck = async (req, res, next) => {
+  try {
+    const { receiver: cpf_body, value, currency } = req.body;
+    const data = await getUser(cpf_body);
+    if (!cpf_body) {
+      return res.status(StatusCodes.BAD_REQUEST).send({
+        message: 'You need to inform receiver and value.',
+      });
+    } if (value !== 0 && !value) {
+      return res.status(StatusCodes.BAD_REQUEST).send({
+        message: 'You need to inform receiver and value.',
+      });
+    } if (data.length < 1) {
+      return res.status(StatusCodes.BAD_REQUEST).send({
+        message: 'The informed account does not exist.',
+      });
+    } if (value <= 0 || typeof value === 'string') {
+      return res.status(StatusCodes.BAD_REQUEST).send({
+        message: 'The value must be a number higher than zero.',
+      });
+    } if (currency !== 'BRL' && currency !== 'USD') {
+      return res.status(StatusCodes.BAD_REQUEST).send({
+        message: 'Only BRL and USD deposits are allowed.',
+      });
+    } if (currency === 'BRL') {
+      if(+value > 2000) {
+        return res.status(StatusCodes.BAD_REQUEST).send({
+          message: 'For security reasons, we are not allowed to receive deposits greater than BRL 2.000,00.',
+        });
+      }
+    } if (currency === 'USD') {
+      const response = await fetch('https://economia.awesomeapi.com.br/json/all');
+      const { USD: dolar } = await response.json();
+      if (+value * dolar.ask > 2000) {
+        return res.status(StatusCodes.BAD_REQUEST).send({
+          message: 'For security reasons, we are not allowed to receive deposits greater than BRL 2.000,00.',
+        });
+      }
+    }
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+};
+
 
 module.exports = {
-  adminCheck, selfCheck, userCheck, transferCheck, blockedCheck,
+  adminCheck, selfCheck, userCheck, transferCheck, blockedCheck, depositCheck,
 };

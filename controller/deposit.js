@@ -2,8 +2,8 @@ const router = require('express').Router();
 const { auth } = require('../middleware/auth');
 const { StatusCodes } = require('http-status-codes');
 const { getDeposits } = require('../model/deposit');
-const { prepareDeposit } = require('../service/transaction');
-const { adminCheck, selfCheck, transferCheck, blockedCheck } = require('../middleware/validation');
+const { prepareDeposit } = require('../service/deposit');
+const { adminCheck, selfCheck, depositCheck, blockedCheck } = require('../middleware/validation');
 
 router.get('/', auth, adminCheck, async (req, res, next) => {
   try {
@@ -24,18 +24,19 @@ router.get('/:cpf', auth, selfCheck, async (req, res, next) => {
   }
 });
 
-router.post('/', auth, transferCheck, blockedCheck, async (req, res, next) => {
+router.post('/', depositCheck, blockedCheck, async (req, res, next) => {
   try {
-    const { cpf: cpf_token } = req.user;
-    const { receiver: cpf_body, value } = req.body;
-    const data = await prepareDeposit(cpf_token, cpf_body, value);
-    if (data.affectedRows === 1) {
+    const { receiver: cpf_body, value, currency } = req.body;
+    const { depositValue, feeValue } = await prepareDeposit(cpf_body, value, currency);
+    if (depositValue) {
       return res.status(StatusCodes.CREATED).send({
-        message: `Successfuly transfered BRL ${value} from ${cpf_token} to ${cpf_body}`,
+        message: 'Deposit was successful!',
+        value: +depositValue,
+        fee: +feeValue
       });
     }
     return res.status(StatusCodes.BAD_REQUEST).send({
-      message: `Could not transfer BRL ${value} from ${cpf_token} to ${cpf_body}`,
+      message: 'Deposit failed.',
     });
   } catch (err) {
     return next(err);

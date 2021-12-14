@@ -3,8 +3,7 @@ const chaiHttp = require('chai-http');
 const { StatusCodes } = require('http-status-codes');
 
 const server = require('../index');
-// const { getBalance } = require('../model/balance');
-// const { getUser } = require('../model/user');
+const { getBalance } = require('../model/balance');
 
 const { expect } = chai;
 
@@ -105,6 +104,156 @@ describe('5 - DEPOSIT', () => {
       .set('token', login.body.token)
       .send({});
       expect(response).to.have.status(StatusCodes.UNAUTHORIZED);
+    });
+  });
+
+  describe('5.2 - Check POST methods', () => {
+    it('Check if anyone, even without token, can deposit into an account', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'BRL',
+        value: 500
+      });
+      expect(response).to.have.status(StatusCodes.CREATED);
+      
+      const [data] = await getBalance('12345678901');
+      expect(data.balance).to.equal('13130.00');
+    });
+
+    it('Check if it is not possible to deposit into an nonexistent account', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '98998998998',
+        currency: 'BRL',
+        value: 500
+      });
+      expect(response).to.have.status(StatusCodes.BAD_REQUEST);
+      expect(response.body.message).to.equal('The informed account does not exist.');
+    });
+
+    it('Check if it is possible to deposit in USD currency', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'USD',
+        value: 200
+      });
+      expect(response).to.have.status(StatusCodes.CREATED);
+      
+      const [data] = await getBalance('12345678901');
+      expect(+data.balance).to.be.gt(12630);
+    });
+
+    it('Check if it is not possible to deposit in any other currency', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'EUR',
+        value: 100
+      });
+      expect(response).to.have.status(StatusCodes.BAD_REQUEST);
+      expect(response.body.message).to.equal('Only BRL and USD deposits are allowed.');
+    });
+
+    it('Check if it is not possible to deposit negative values', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'BRL',
+        value: -100
+      });
+      expect(response).to.have.status(StatusCodes.BAD_REQUEST);
+      expect(response.body.message).to.equal('The value must be a number higher than zero.');
+    });
+
+    it('Check if it is not possible to deposit negative values', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'BRL',
+        value: 0
+      });
+      expect(response).to.have.status(StatusCodes.BAD_REQUEST);
+      expect(response.body.message).to.equal('The value must be a number higher than zero.');
+    });
+
+    it('Check if it is not possible to deposit with string as value', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'BRL',
+        value: '1500'
+      });
+      expect(response).to.have.status(StatusCodes.BAD_REQUEST);
+      expect(response.body.message).to.equal('The value must be a number higher than zero.');
+    });
+
+    it('Check if it is not possible to deposit values greater than BRL 2.000,00', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'BRL',
+        value: 2100
+      });
+      expect(response).to.have.status(StatusCodes.BAD_REQUEST);
+      expect(response.body.message).to.equal('For security reasons, we are not allowed to receive deposits greater than BRL 2.000,00.');
+    });
+
+    it('Check if it is not possible to deposit USD values greater than BRL 2.000,00', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'USD',
+        value: 600
+      });
+      expect(response).to.have.status(StatusCodes.BAD_REQUEST);
+      expect(response.body.message).to.equal('For security reasons, we are not allowed to receive deposits greater than BRL 2.000,00.');
+    });
+
+    it('Check if a blocked account cannot receive deposits', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '17117117117',
+        currency: 'BRL',
+        value: 600
+      });
+      expect(response).to.have.status(StatusCodes.UNAUTHORIZED);
+      expect(response.body.message).to.equal('The receiver is blocked, thus cannot receive any money.');
+    });
+
+    it('Check if a USD deposit costs fees', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'USD',
+        value: 100
+      });
+      expect(response).to.have.status(StatusCodes.CREATED);
+      expect(+response.body.fee).to.be.gt(0);
+    });
+
+    it('Check if USD deposits are credited as BRL', async () => {
+      const response = await chai.request(server)
+      .post('/deposit')
+      .send({
+        receiver: '12345678901',
+        currency: 'USD',
+        value: 100
+      });
+      expect(response).to.have.status(StatusCodes.CREATED);
+      expect(+response.body.value).to.be.gt(100);
     });
   });
 });

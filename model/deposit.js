@@ -25,15 +25,46 @@ const getDeposits = async (cpf) => {
   return result;
 };
 
-const depositAmount = async (from, to, value) => {
+const getDepositInfo = async (depositId) => {
   const [result] = await mysql.query(
-    `INSERT INTO transaction (from_user, to_user, value)
-    VALUES (?, ?, ?)`,
-    [from, to, value],
+    `SELECT *
+    FROM deposit
+    WHERE deposit.id_deposit = ?
+    `,
+    [depositId],
   );
   return result;
 }
 
+const chargeFee = async (usd_value, exchange_price, exchange_fee_brl) => {
+  const [result] = await mysql.query(
+    `INSERT INTO exchange_fee (usd_value, exchange_price, exchange_fee_brl)
+    VALUES (?, ?, ?)`,
+    [usd_value, exchange_price, exchange_fee_brl],
+  );
+  return result;
+}
+
+const depositUsdAmount = async (to_user, value, id_exchange_fee) => {
+  const [result] = await mysql.query(
+    `INSERT INTO deposit (to_user, value, id_exchange_fee)
+    VALUES (?, ?, ?)`,
+    [to_user, value, id_exchange_fee],
+  );
+  return result;
+}
+
+
+const depositBrlAmount = async (to_user, value) => {
+  const [result] = await mysql.query(
+    `INSERT INTO deposit (to_user, value)
+    VALUES (?, ?)`,
+    [to_user, value],
+  );
+  return result;
+}
+
+
 module.exports = {
-  getDeposits, depositAmount,
+  getDeposits, getDepositInfo, chargeFee, depositUsdAmount, depositBrlAmount
 };
