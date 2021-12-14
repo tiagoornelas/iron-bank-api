@@ -45,7 +45,17 @@ Requisitos extras desenvolvidas no projeto:
 ---
 ## Tecnologias
 
-No Iron Bank foi utilizado **NodeJS, Express, MySQL, Json Web Token, BCrypt, Cross Fetch, .env, HTTP Status Codes**; para testes de integração foi utilizado **Mocha, Chai, Chai-HTTP** e, por fim, para padrões de formatação utilizou-se o **EsLint**.
+No Iron Bank foi utilizado:
+        - **NodeJS**
+        - **Express**
+        - **MySQL**
+        - Json Web Token
+        - BCrypt
+        - Cross Fetch
+        - Dotenv
+        - HTTP Status Codes
+        - Mocha / Chai / Chai-HTTP
+        - EsLint
 
 ## Instalação
 
