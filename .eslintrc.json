@@ -6,8 +6,9 @@
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaVersion": 13
+        "ecmaVersion": "latest"
     },
     "rules": {
+      "no-undef": "off"
     }
 }
